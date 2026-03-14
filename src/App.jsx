@@ -567,7 +567,7 @@ export default function App() {
 
   return (
     // Max width 390px matches Samsung Fold 4 cover screen width
-    <div style={{ fontFamily: "'Georgia', serif", background: "#f0ede4", minHeight: "100vh", maxWidth: 390, margin: "0 auto", display: "flex", flexDirection: "column" }}>
+    <div style={{ fontFamily: "'Georgia', serif", background: "#f0ede4", minHeight: "100vh", maxWidth: 600, width: "100%", margin: "0 auto", display: "flex", flexDirection: "column" }}>
       <div style={{ background: "#2d3a2e", color: "#f5f2eb", padding: "14px 16px", display: "flex", alignItems: "center", gap: 14 }}>
         <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: -1 }}>공부</div>
         <div>
