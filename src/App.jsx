@@ -400,7 +400,7 @@ function History({ sessions, onDelete, onImport }) {
           )}
           <label style={{ ...ss.outlineBtn, display: "inline-block", cursor: "pointer" }}>
             ⬆ Import CSV
-            <input type="file" accept=".csv" onChange={importCSV} style={{ display: "none" }} />
+            <input type="file" accept=".csv,text/csv,text/plain,application/vnd.ms-excel" onChange={importCSV} style={{ display: "none" }} />
           </label>
           <button onClick={exportCSV} style={ss.outlineBtn}>⬇ Export CSV</button>
         </div>
