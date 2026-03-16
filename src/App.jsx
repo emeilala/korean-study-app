@@ -369,7 +369,8 @@ function History({ sessions, onDelete, onImport }) {
           const tagLabels = activities.split(";").map((a) => a.trim()).filter(Boolean);
           const tags = tagLabels.map((label) => {
             const found = ACTIVITY_TAGS.find((t) => t.label.toLowerCase() === label.toLowerCase());
-            return found ? found.id : null;
+            // Keep unknown tags as a slugified id so the session still imports
+            return found ? found.id : label.toLowerCase().replace(/\s+/g, "_");
           }).filter(Boolean);
           return {
             id: Date.now() + Math.random(),
