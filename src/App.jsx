@@ -307,8 +307,9 @@ function LogSession({ onSave }) {
   );
 }
 
-function History({ sessions, onDelete }) {
+function History({ sessions, onDelete, onImport }) {
   const [exportFeedback, setExportFeedback] = useState("");
+  const [importFeedback, setImportFeedback] = useState("");
 
   const grouped = useMemo(() => {
     const sorted = [...sessions].sort((a, b) => b.date.localeCompare(a.date));
@@ -350,12 +351,57 @@ function History({ sessions, onDelete }) {
     setTimeout(() => setExportFeedback(""), 3000);
   };
 
+
+  const importCSV = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const lines = ev.target.result.trim().split("\n");
+        const rows = lines.slice(1); // skip header
+        const imported = rows.map((line) => {
+          // Handle quoted fields (notes may contain commas)
+          const match = line.match(/^([^,]+),([^,]+),([^,]*),(.*)$/s);
+          if (!match) return null;
+          const [, date, duration, activities, notes] = match;
+          const cleanNotes = notes.replace(/^"|"$/g, "").replace(/""/g, '"').trim();
+          const tagLabels = activities.split(";").map((a) => a.trim()).filter(Boolean);
+          const tags = tagLabels.map((label) => {
+            const found = ACTIVITY_TAGS.find((t) => t.label.toLowerCase() === label.toLowerCase());
+            return found ? found.id : null;
+          }).filter(Boolean);
+          return {
+            id: Date.now() + Math.random(),
+            date: date.trim(),
+            duration: parseInt(duration.trim(), 10),
+            tags,
+            notes: cleanNotes,
+          };
+        }).filter(Boolean);
+        onImport(imported);
+        setImportFeedback(`✓ Imported ${imported.length} sessions`);
+        setTimeout(() => setImportFeedback(""), 3000);
+      } catch {
+        setImportFeedback("Error reading file.");
+        setTimeout(() => setImportFeedback(""), 3000);
+      }
+      e.target.value = "";
+    };
+    reader.readAsText(file);
+  };
   return (
     <div style={{ padding: "16px 14px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <div style={ss.sectionLabel}>SESSION HISTORY</div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {exportFeedback && <span style={{ fontSize: 11, color: "#3a5a40", fontWeight: 600 }}>{exportFeedback}</span>}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+          {(exportFeedback || importFeedback) && (
+            <span style={{ fontSize: 11, color: "#3a5a40", fontWeight: 600 }}>{exportFeedback || importFeedback}</span>
+          )}
+          <label style={{ ...ss.outlineBtn, display: "inline-block", cursor: "pointer" }}>
+            ⬆ Import CSV
+            <input type="file" accept=".csv" onChange={importCSV} style={{ display: "none" }} />
+          </label>
           <button onClick={exportCSV} style={ss.outlineBtn}>⬇ Export CSV</button>
         </div>
       </div>
@@ -568,6 +614,14 @@ export default function App() {
 
   const deleteSession = (id) => setSessions_((prev) => prev.filter((s) => s.id !== id));
 
+  const importSessions = (imported) => {
+    setSessions_((prev) => {
+      const existingIds = new Set(prev.map((s) => s.date + "_" + s.duration));
+      const deduped = imported.filter((s) => !existingIds.has(s.date + "_" + s.duration));
+      return [...deduped, ...prev];
+    });
+  };
+
   return (
     // Max width 390px matches Samsung Fold 4 cover screen width
     <div style={{ fontFamily: "'Georgia', serif", background: "#f0ede4", minHeight: "100vh", maxWidth: 600, width: "100%", margin: "0 auto", display: "flex", flexDirection: "column" }}>
@@ -597,7 +651,7 @@ export default function App() {
       <div style={{ flex: 1, overflowY: "auto" }}>
         {tab === "dashboard" && <Dashboard sessions={sessions} />}
         {tab === "log" && <LogSession onSave={addSession} />}
-        {tab === "history" && <History sessions={sessions} onDelete={deleteSession} />}
+        {tab === "history" && <History sessions={sessions} onDelete={deleteSession} onImport={importSessions} />}
         {tab === "programs" && <Programs sessions={sessions} onLogSession={addSessionFromPrograms} />}
       </div>
     </div>
