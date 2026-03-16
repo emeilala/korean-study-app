@@ -587,8 +587,8 @@ function Programs({ sessions, onLogSession }) {
 const TABS = [
   { id: "dashboard", label: "Dashboard", icon: "◎" },
   { id: "log", label: "Log Session", icon: "+" },
-  { id: "history", label: "History", icon: "≡" },
   { id: "programs", label: "Programs", icon: "⊞" },
+  { id: "history", label: "History", icon: "≡" },
 ];
 
 export default function App() {
