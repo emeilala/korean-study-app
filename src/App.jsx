@@ -1,13 +1,16 @@
 import { useState, useMemo } from "react";
 
 const ACTIVITY_TAGS = [
-  { id: "hangeul", label: "한글 Class", emoji: "🏠", color: "#3a5a40" },
+  { id: "class", label: "Korean Class", emoji: "🏫", color: "#3a5a40" },
   { id: "pimsleur", label: "Pimsleur", emoji: "🎧", color: "#6b4c3b" },
   { id: "ttmik", label: "TTMIK", emoji: "📘", color: "#2c4a6e" },
   { id: "writing", label: "Writing", emoji: "🔥", color: "#7a3b1e" },
   { id: "reading", label: "Reading", emoji: "📖", color: "#4a5568" },
   { id: "listening", label: "Listening", emoji: "💡", color: "#744210" },
   { id: "vocabulary", label: "Vocabulary", emoji: "🍒", color: "#702459" },
+  { id: "speaking", label: "Speaking", emoji: "🗣️", color: "#2d6a4f" },
+  { id: "video", label: "Video", emoji: "🎬", color: "#1b4f72" },
+  { id: "games", label: "Games", emoji: "🎮", color: "#6c3483" },
   { id: "bootcamp", label: "Bootcamp", emoji: "🚀", color: "#553c9a" },
   { id: "exam", label: "Exam / Quiz", emoji: "📝", color: "#b7410e" },
   { id: "other", label: "Other", emoji: "💬", color: "#555" },
