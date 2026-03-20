@@ -1,19 +1,19 @@
 import { useState, useMemo } from "react";
 
 const ACTIVITY_TAGS = [
-  { id: "class", label: "Korean Class", emoji: "🏫", color: "#3a5a40" },
-  { id: "pimsleur", label: "Pimsleur", emoji: "🎧", color: "#6b4c3b" },
-  { id: "ttmik", label: "TTMIK", emoji: "📘", color: "#2c4a6e" },
-  { id: "writing", label: "Writing", emoji: "🔥", color: "#7a3b1e" },
-  { id: "reading", label: "Reading", emoji: "📖", color: "#4a5568" },
-  { id: "listening", label: "Listening", emoji: "💡", color: "#744210" },
-  { id: "vocabulary", label: "Vocabulary", emoji: "🍒", color: "#702459" },
-  { id: "speaking", label: "Speaking", emoji: "🗣️", color: "#2d6a4f" },
-  { id: "video", label: "Video", emoji: "🎬", color: "#1b4f72" },
-  { id: "games", label: "Games", emoji: "🎮", color: "#6c3483" },
-  { id: "bootcamp", label: "Bootcamp", emoji: "🚀", color: "#553c9a" },
-  { id: "exam", label: "Exam / Quiz", emoji: "📝", color: "#b7410e" },
-  { id: "other", label: "Other", emoji: "💬", color: "#555" },
+  { id: "class", label: "Korean Class", emoji: "🏫", color: "#9b7fb6" },
+  { id: "pimsleur", label: "Pimsleur", emoji: "🎧", color: "#b07aaa" },
+  { id: "ttmik", label: "TTMIK", emoji: "📘", color: "#7a9cc4" },
+  { id: "writing", label: "Writing", emoji: "🔥", color: "#c47a9a" },
+  { id: "reading", label: "Reading", emoji: "📖", color: "#8a9cc4" },
+  { id: "listening", label: "Listening", emoji: "💡", color: "#a08fc4" },
+  { id: "vocabulary", label: "Vocabulary", emoji: "🍒", color: "#c47aaa" },
+  { id: "speaking", label: "Speaking", emoji: "🗣️", color: "#7ab4c4" },
+  { id: "video", label: "Video", emoji: "🎬", color: "#7a8fc4" },
+  { id: "games", label: "Games", emoji: "🎮", color: "#b49ac4" },
+  { id: "bootcamp", label: "Bootcamp", emoji: "🚀", color: "#9a7fc4" },
+  { id: "exam", label: "Exam / Quiz", emoji: "📝", color: "#c49ab4" },
+  { id: "other", label: "Other", emoji: "💬", color: "#a4a0b4" },
 ];
 
 const DURATIONS = [15, 30, 45, 60, 90];
@@ -26,11 +26,16 @@ const RESOURCES = [
 ];
 
 // Bootcamp starts April 1 2026
-const BOOTCAMP_START = "2026-04-01";
+const BOOTCAMP_START = "2026-03-30";
 const BOOTCAMP_WEEKS = 6;
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
-const parseDate = (iso) => new Date(iso + "T00:00:00");
+const parseDate = (iso) => {
+  if (!iso || typeof iso !== "string") return new Date();
+  const clean = iso.trim().slice(0, 10);
+  const d = new Date(clean + "T00:00:00");
+  return isNaN(d.getTime()) ? new Date() : d;
+};
 const fmt = (iso) => parseDate(iso).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 const fmtShort = (iso) => parseDate(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
@@ -46,6 +51,20 @@ const fmtWeekLabel = (iso) =>
   "Week of " + parseDate(iso).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 
 const getTag = (id) => ACTIVITY_TAGS.find((t) => t.id === id);
+// Map legacy tag labels/ids to current ones
+const LEGACY_TAG_MAP = {
+  "한글 class": "class",
+  "hangeul": "class",
+  "한글class": "class",
+};
+
+const resolveTagLabel = (label) => {
+  const lower = label.toLowerCase().trim();
+  if (LEGACY_TAG_MAP[lower]) return LEGACY_TAG_MAP[lower];
+  const found = ACTIVITY_TAGS.find((t) => t.label.toLowerCase() === lower || t.id === lower);
+  return found ? found.id : null;
+};
+
 const fmtMin = (m) => m < 60 ? `${m}m` : `${Math.floor(m / 60)}h${m % 60 ? " " + (m % 60) + "m" : ""}`;
 
 // Add days to a date ISO string (using local date to avoid timezone slip)
@@ -55,7 +74,7 @@ const addDays = (iso, n) => {
   const yyyy = d.getFullYear();
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
+  return yyyy + "-" + mm + "-" + dd;
 };
 
 // Build bootcamp week structure: array of 6 weeks, each with 7 day ISO strings
@@ -129,10 +148,10 @@ function Dashboard({ sessions }) {
     <div style={{ padding: "16px 14px" }}>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
         {[
-          { val: `${streak}일`, label: "DAY STREAK", sub: streak > 0 ? "Keep going!" : "Start today!", accent: "#3a5a40" },
-          { val: fmtMin(todayMin || 0), label: "TODAY", sub: todayMin >= 30 ? "Goal met ✓" : "Goal: 30m", accent: "#553c9a" },
-          { val: fmtMin(weekMin), label: "THIS WEEK", sub: `${pct}% of 3.5hr goal`, accent: "#2c4a6e" },
-          { val: sessions.length, label: "TOTAL SESSIONS", sub: "", accent: "#744210" },
+          { val: `${streak}일`, label: "DAY STREAK", sub: streak > 0 ? "Keep going!" : "Start today!", accent: "#b07aaa" },
+          { val: fmtMin(todayMin || 0), label: "TODAY", sub: todayMin >= 30 ? "Goal met ✓" : "Goal: 30m", accent: "#9a7fc4" },
+          { val: fmtMin(weekMin), label: "THIS WEEK", sub: `${pct}% of 3.5hr goal`, accent: "#7a9cc4" },
+          { val: sessions.length, label: "TOTAL SESSIONS", sub: "", accent: "#c49ab4" },
         ].map((c) => (
           <div key={c.label} style={{ background: "#fff", borderRadius: 10, padding: "13px 14px", borderLeft: `3px solid ${c.accent}` }}>
             <div style={{ fontSize: 24, fontWeight: 700, color: "#1a1a1a", lineHeight: 1 }}>{c.val}</div>
@@ -144,7 +163,7 @@ function Dashboard({ sessions }) {
 
       <div style={ss.sectionLabel}>WEEKLY PROGRESS</div>
       <div style={{ background: "#e5e5e5", borderRadius: 4, height: 7, marginBottom: 5 }}>
-        <div style={{ width: `${pct}%`, background: "#3a5a40", height: "100%", borderRadius: 4 }} />
+        <div style={{ width: `${pct}%`, background: "#7a6aaa", height: "100%", borderRadius: 4 }} />
       </div>
       <div style={{ fontSize: 11, color: "#888", marginBottom: 16 }}>{fmtMin(weekMin)} / 3h 30m target</div>
 
@@ -194,11 +213,11 @@ function LogSessionModal({ date, onSave, onClose }) {
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 100, display: "flex", alignItems: "flex-end" }}>
-      <div style={{ background: "#f0ede4", borderRadius: "16px 16px 0 0", padding: "24px 16px 32px", width: "100%", maxWidth: 540, margin: "0 auto" }}>
+      <div style={{ background: "#f5f0f8", borderRadius: "16px 16px 0 0", padding: "24px 16px 32px", width: "100%", maxWidth: 540, margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
           <div>
             <div style={ss.sectionLabel}>LOG SESSION</div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: "#2d3a2e" }}>{fmt(date)}</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: "#6b5b8a" }}>{fmt(date)}</div>
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 22, color: "#aaa", cursor: "pointer" }}>×</button>
         </div>
@@ -277,7 +296,7 @@ function LogSession({ onSave }) {
       </div>
       <input type="range" min={5} max={180} step={5} value={duration}
         onChange={(e) => setDuration(Number(e.target.value))}
-        style={{ width: "100%", accentColor: "#3a5a40", marginBottom: 4 }} />
+        style={{ width: "100%", accentColor: "#7a6aaa", marginBottom: 4 }} />
       <div style={{ textAlign: "center", fontSize: 12, color: "#888", marginBottom: 14 }}>{duration} minutes</div>
 
       <label style={ss.fieldLabel}>What did you work on?</label>
@@ -397,7 +416,7 @@ function History({ sessions, onDelete, onImport }) {
         <div style={ss.sectionLabel}>SESSION HISTORY</div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
           {(exportFeedback || importFeedback) && (
-            <span style={{ fontSize: 11, color: "#3a5a40", fontWeight: 600 }}>{exportFeedback || importFeedback}</span>
+            <span style={{ fontSize: 11, color: "#7a6aaa", fontWeight: 600 }}>{exportFeedback || importFeedback}</span>
           )}
           <label style={{ ...ss.outlineBtn, display: "inline-block", cursor: "pointer" }}>
             ⬆ Import CSV
@@ -414,7 +433,7 @@ function History({ sessions, onDelete, onImport }) {
         return (
           <div key={wk} style={{ marginBottom: 24 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: 7, borderBottom: "1.5px solid #d0cec6", marginBottom: 10 }}>
-              <span style={{ fontWeight: 700, fontSize: 13, color: "#3a5a40" }}>{fmtWeekLabel(wk)}</span>
+              <span style={{ fontWeight: 700, fontSize: 13, color: "#7a6aaa" }}>{fmtWeekLabel(wk)}</span>
               <span style={{ fontSize: 11, color: "#aaa" }}>{wkSessions.length} sessions · {fmtMin(total)}</span>
             </div>
             {wkSessions.map((session) => (
@@ -464,7 +483,7 @@ function Programs({ sessions, onLogSession }) {
   return (
     <div style={{ padding: "16px 14px" }}>
       {/* Bootcamp header */}
-      <div style={{ background: "#2d3a2e", borderRadius: 12, padding: "18px 16px", marginBottom: 16, color: "#f5f2eb" }}>
+      <div style={{ background: "#6b5b8a", borderRadius: 12, padding: "18px 16px", marginBottom: 16, color: "#f5f2eb" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
           <span style={{ fontSize: 28 }}>🚀</span>
           <div>
@@ -485,7 +504,7 @@ function Programs({ sessions, onLogSession }) {
             <div style={{ background: "rgba(255,255,255,0.15)", borderRadius: 4, height: 7 }}>
               <div style={{
                 width: `${Math.min(100, (loggedDates.size / 42) * 100)}%`,
-                background: "#6b8f71", height: "100%", borderRadius: 4,
+                background: "#9b7fb6", height: "100%", borderRadius: 4,
               }} />
             </div>
           </>
@@ -509,10 +528,10 @@ function Programs({ sessions, onLogSession }) {
               onClick={() => setExpandedWeek(isExpanded ? null : wIdx)}
               style={{ width: "100%", background: "none", border: "none", cursor: weekLocked ? "default" : "pointer", padding: "13px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontWeight: 700, fontSize: 14, color: weekLocked ? "#aaa" : "#2d3a2e" }}>
+                <span style={{ fontWeight: 700, fontSize: 14, color: weekLocked ? "#aaa" : "#6b5b8a" }}>
                   Week {weekNum}
                 </span>
-                {isCurrent && <span style={{ background: "#3a5a40", color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 10, padding: "2px 8px" }}>NOW</span>}
+                {isCurrent && <span style={{ background: "#7a6aaa", color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 10, padding: "2px 8px" }}>NOW</span>}
                 <span style={{ fontSize: 11, color: "#aaa" }}>{fmtShort(weekStart)} – {fmtShort(weekEnd)}</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -536,15 +555,15 @@ function Programs({ sessions, onLogSession }) {
                       onClick={() => !isFuture && setModalDate(dayISO)}
                       style={{
                         display: "flex", flexDirection: "column", alignItems: "center",
-                        padding: "8px 4px", borderRadius: 8, border: isToday ? "2px solid #3a5a40" : "1.5px solid #e0ddd5",
-                        background: isLogged ? "#3a5a40" : isFuture ? "#faf9f6" : "#fff",
+                        padding: "8px 4px", borderRadius: 8, border: isToday ? "2px solid #7a6aaa" : "1.5px solid #e0ddd5",
+                        background: isLogged ? "#7a6aaa" : isFuture ? "#faf9f6" : "#fff",
                         cursor: isFuture ? "default" : "pointer",
                         opacity: isFuture ? 0.4 : 1,
                       }}>
                       <span style={{ fontSize: 9, fontWeight: 700, color: isLogged ? "rgba(255,255,255,0.7)" : "#aaa", textTransform: "uppercase" }}>
                         {dayOfWeekLabel(dayISO)}
                       </span>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: isLogged ? "#fff" : isToday ? "#3a5a40" : isPast ? "#ccc" : "#2d2d2d", marginTop: 2 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: isLogged ? "#fff" : isToday ? "#7a6aaa" : isPast ? "#ccc" : "#2d2d2d", marginTop: 2 }}>
                         {parseDate(dayISO).getDate()}
                       </span>
                       {isLogged && <span style={{ fontSize: 10, marginTop: 2 }}>✓</span>}
@@ -625,8 +644,8 @@ export default function App() {
 
   return (
     // Max width 390px matches Samsung Fold 4 cover screen width
-    <div style={{ fontFamily: "'Georgia', serif", background: "#f0ede4", minHeight: "100vh", maxWidth: 600, width: "100%", margin: "0 auto", display: "flex", flexDirection: "column" }}>
-      <div style={{ background: "#2d3a2e", color: "#f5f2eb", padding: "14px 16px", display: "flex", alignItems: "center", gap: 14 }}>
+    <div style={{ fontFamily: "'Georgia', serif", background: "#f5f0f8", minHeight: "100vh", maxWidth: 600, width: "100%", margin: "0 auto", display: "flex", flexDirection: "column" }}>
+      <div style={{ background: "#6b5b8a", color: "#f5f2eb", padding: "14px 16px", display: "flex", alignItems: "center", gap: 14 }}>
         <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: -1 }}>공부</div>
         <div>
           <div style={{ fontWeight: 700, fontSize: 16 }}>Korean Study Log</div>
@@ -639,7 +658,7 @@ export default function App() {
           <button key={t.id} onClick={() => setTab(t.id)}
             style={{
               flex: 1, padding: "10px 4px 8px", border: "none", background: "none", cursor: "pointer",
-              borderBottom: tab === t.id ? "2px solid #3a5a40" : "2px solid transparent",
+              borderBottom: tab === t.id ? "2px solid #7a6aaa" : "2px solid transparent",
               color: tab === t.id ? "#3a5a40" : "#999",
               display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
             }}>
@@ -662,9 +681,9 @@ export default function App() {
 const ss = {
   sectionLabel: { fontSize: 10, fontWeight: 700, letterSpacing: 1.5, color: "#aaa", textTransform: "uppercase", marginBottom: 10 },
   fieldLabel: { display: "block", fontSize: 12, fontWeight: 600, color: "#555", marginBottom: 5, marginTop: 12 },
-  input: { width: "100%", padding: "9px 11px", border: "1px solid #d8d5cd", borderRadius: 8, fontSize: 13, fontFamily: "Georgia, serif", background: "#faf9f5", boxSizing: "border-box", marginBottom: 4 },
+  input: { width: "100%", padding: "9px 11px", border: "1px solid #d8d5cd", borderRadius: 8, fontSize: 13, fontFamily: "Georgia, serif", background: "#fdf8fe", boxSizing: "border-box", marginBottom: 4 },
   chip: { padding: "5px 12px", border: "1.5px solid #d0cfc8", borderRadius: 20, background: "#fff", cursor: "pointer", fontSize: 12, color: "#555", fontFamily: "Georgia, serif" },
-  chipActive: { background: "#3a5a40", color: "#fff", borderColor: "#3a5a40" },
-  primaryBtn: { width: "100%", padding: "13px", background: "#6b8f71", color: "#fff", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "Georgia, serif", marginTop: 14 },
-  outlineBtn: { padding: "6px 14px", border: "1.5px solid #3a5a40", borderRadius: 20, background: "#fff", color: "#3a5a40", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "Georgia, serif" },
+  chipActive: { background: "#7a6aaa", color: "#fff", borderColor: "#7a6aaa" },
+  primaryBtn: { width: "100%", padding: "13px", background: "#9b7fb6", color: "#fff", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "Georgia, serif", marginTop: 14 },
+  outlineBtn: { padding: "6px 14px", border: "1.5px solid #7a6aaa", borderRadius: 20, background: "#fff", color: "#7a6aaa", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "Georgia, serif" },
 };
