@@ -463,7 +463,12 @@ function Programs({ sessions, onLogSession }) {
   const today = todayISO();
 
   // Which dates have sessions logged?
-  const loggedDates = new Set(sessions.map((s) => s.date));
+  // Only count sessions that fall within the bootcamp date range
+  const loggedDates = new Set(
+    sessions
+      .filter((s) => s.date >= BOOTCAMP_START && s.date <= BOOTCAMP_END)
+      .map((s) => s.date)
+  );
 
   // Bootcamp status
   const bootcampStarted = today >= BOOTCAMP_START;
