@@ -1,5 +1,36 @@
 import { useState, useMemo } from "react";
 
+const parseDate = (iso) => {
+  if (!iso || typeof iso !== "string") return new Date();
+  const clean = iso.trim().slice(0, 10);
+  const d = new Date(clean + "T00:00:00");
+  return isNaN(d.getTime()) ? new Date() : d;
+};
+
+const addDays = (iso, n) => {
+  const d = parseDate(iso);
+  d.setDate(d.getDate() + n);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return yyyy + "-" + mm + "-" + dd;
+};
+
+const nextMonday = (iso) => {
+  const d = parseDate(iso);
+  const day = d.getDay();
+  const diff = day === 1 ? 7 : (8 - day) % 7 || 7;
+  return addDays(iso, diff);
+};
+
+const buildWeek = (monISO) => {
+  const days = [];
+  for (let d = 0; d < 5; d++) days.push(addDays(monISO, d));
+  return days;
+};
+
+
+
 const ACTIVITY_TAGS = [
   { id: "class", label: "Korean Class", emoji: "🏫", color: "#9b7fb6" },
   { id: "pimsleur", label: "Pimsleur", emoji: "🎧", color: "#b07aaa" },
@@ -34,20 +65,6 @@ const HOLIDAY_START = "2026-06-07";
 const HOLIDAY_END   = "2026-06-13";
 
 // Build a week of Mon–Fri ISO dates from a Monday ISO string
-const buildWeek = (monISO) => {
-  const days = [];
-  for (let d = 0; d < 5; d++) days.push(addDays(monISO, d));
-  return days;
-};
-
-// Helper: next Monday after a given ISO date
-const nextMonday = (iso) => {
-  const d = parseDate(iso);
-  const day = d.getDay();
-  const diff = day === 1 ? 7 : (8 - day) % 7 || 7;
-  return addDays(iso, diff);
-};
-
 // SCHEDULE — each entry: { label, phase, subtitle, monISO, isHoliday?, isBreak? }
 const buildSchedule = () => {
   const entries = [];
@@ -110,12 +127,6 @@ const lastStudyWeek = [...SCHEDULE].reverse().find(e => e.days && e.days.length 
 const BOOTCAMP_END = lastStudyWeek ? lastStudyWeek.days[4] : "2026-09-30";
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
-const parseDate = (iso) => {
-  if (!iso || typeof iso !== "string") return new Date();
-  const clean = iso.trim().slice(0, 10);
-  const d = new Date(clean + "T00:00:00");
-  return isNaN(d.getTime()) ? new Date() : d;
-};
 const fmt = (iso) => parseDate(iso).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 const fmtShort = (iso) => parseDate(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
@@ -146,16 +157,6 @@ const resolveTagLabel = (label) => {
 };
 
 const fmtMin = (m) => m < 60 ? `${m}m` : `${Math.floor(m / 60)}h${m % 60 ? " " + (m % 60) + "m" : ""}`;
-
-// Add days to a date ISO string (using local date to avoid timezone slip)
-const addDays = (iso, n) => {
-  const d = parseDate(iso);
-  d.setDate(d.getDate() + n);
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return yyyy + "-" + mm + "-" + dd;
-};
 
 
 
@@ -566,7 +567,15 @@ function Programs({ sessions, onLogSession }) {
     days.length > 0 ? fmtShort(days[0]) + " – " + fmtShort(days[days.length - 1]) : "";
 
   // Phase labels
-  let lastPhase = null;
+  // Precompute which indices should show a phase label
+  const phaseHeaderAt = new Set();
+  let _lastPhase = null;
+  SCHEDULE.forEach((entry, idx) => {
+    if (!entry.isHoliday && !entry.isBreak && entry.phase !== _lastPhase) {
+      phaseHeaderAt.add(idx);
+      _lastPhase = entry.phase;
+    }
+  });
 
   return (
     <div style={{ padding: "16px 14px" }}>
@@ -591,8 +600,7 @@ function Programs({ sessions, onLogSession }) {
 
       {/* Schedule */}
       {SCHEDULE.map((entry, idx) => {
-        const showPhaseLabel = !entry.isHoliday && !entry.isBreak && entry.phase !== lastPhase;
-        if (!entry.isHoliday && !entry.isBreak) lastPhase = entry.phase;
+        const showPhaseLabel = phaseHeaderAt.has(idx);
 
         const isExpanded = effectiveExpanded === idx;
         const isCurrent = idx === currentIdx;
