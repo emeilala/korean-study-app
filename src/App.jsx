@@ -22,12 +22,92 @@ const RESOURCES = [
   { icon: "📘", name: "Talk To Me In Korean", desc: "Beginner Extended + 50-day package" },
   { icon: "🎧", name: "Pimsleur", desc: "Lifetime access via app" },
   { icon: "🎓", name: "Coursera", desc: "Access through professional org" },
-  { icon: "✍️", name: "Writing Workbooks", desc: "Currently in use" },
+  { icon: "🌹", name: "Rosetta Stone", desc: "Lifetime access" },
 ];
 
-// Bootcamp starts April 1 2026
-const BOOTCAMP_START = "2026-03-30";
-const BOOTCAMP_WEEKS = 6;
+// ── Bootcamp schedule ────────────────────────────────────────────────────────
+// 20 weeks · TTMIK L1+L2 · Mon–Fri · starts Jun 1 2026
+// Holiday week: Jun 7–13 (greyed out, not counted)
+// Break week: after W11 (between levels)
+
+const HOLIDAY_START = "2026-06-07";
+const HOLIDAY_END   = "2026-06-13";
+
+// Build a week of Mon–Fri ISO dates from a Monday ISO string
+const buildWeek = (monISO) => {
+  const days = [];
+  for (let d = 0; d < 5; d++) days.push(addDays(monISO, d));
+  return days;
+};
+
+// Helper: next Monday after a given ISO date
+const nextMonday = (iso) => {
+  const d = parseDate(iso);
+  const day = d.getDay();
+  const diff = day === 1 ? 7 : (8 - day) % 7 || 7;
+  return addDays(iso, diff);
+};
+
+// SCHEDULE — each entry: { label, phase, subtitle, monISO, isHoliday?, isBreak? }
+const buildSchedule = () => {
+  const entries = [];
+  let cursor = "2026-06-01"; // first Monday
+
+  const weeks = [
+    // Phase 1 — Level 1 Foundations
+    { label: "W1",  phase: 1, sub: "L1 · L3 · L4 — Greetings" },
+    // Holiday
+    null,
+    { label: "W2",  phase: 1, sub: "L5 · L2 · L6 — 이에요/예요" },
+    { label: "W3",  phase: 1, sub: "L7 · L8 · L10 — 이/저/그 · 있어요/없어요" },
+    { label: "W4",  phase: 1, sub: "L9 — Topic/subject particles 은/는 · 이/가" },
+    { label: "W5",  phase: 1, sub: "L11 · L13 · L14 — 주세요 · 고 싶어요" },
+    { label: "W6",  phase: 1, sub: "L15 · L20 — Numbers (sino-Korean + native)" },
+    { label: "W7",  phase: 1, sub: "L16 — Present tense 아/어/여요" },
+    { label: "W8",  phase: 1, sub: "L17 — Past tense 았/었/였어요" },
+    { label: "W9",  phase: 1, sub: "L18 · L19 · L23 — Location particles · 어디 · 에 · 에서" },
+    { label: "W10", phase: 1, sub: "L24 · L21 · L22 — Why/how · negation · 하다 verbs" },
+    { label: "W11", phase: 1, sub: "L25 · Review — 에서/부터/까지 · Level 1 review" },
+    // Break between levels
+    null,
+    // Phase 2 — Level 2
+    { label: "W13", phase: 2, sub: "L1 — Future tense (으)ㄹ 거예요" },
+    { label: "W14", phase: 2, sub: "L2 — Object particles 을/를" },
+    { label: "W15", phase: 2, sub: "L3 · L6 · L4 — Connectors 그리고 · 그래서 · 그렇지만" },
+    { label: "W16", phase: 2, sub: "L7 · L10 · L5 — 한테/한테서 · 고 있어요 · 요일" },
+    { label: "W17", phase: 2, sub: "L8 · L9 · L12 — Time · counters · dates" },
+    { label: "W18", phase: 2, sub: "L13 · L14 · L15 — 도 (too/also) · 만 (only)" },
+    { label: "W19", phase: 2, sub: "L17 · L20 · L21 — Can/cannot · must · more than" },
+    { label: "W20", phase: 2, sub: "L23 · L26–L28 · L11 — If · imperative · 자기소개" },
+  ];
+
+  weeks.forEach((w, i) => {
+    if (w === null) {
+      // null = special week
+      if (i === 1) {
+        // Holiday week
+        entries.push({ label: "Holiday", isHoliday: true, monISO: HOLIDAY_START, days: [] });
+        cursor = nextMonday(HOLIDAY_END);
+      } else {
+        // Break between levels (after W11)
+        const breakMon = cursor;
+        entries.push({ label: "Break", isBreak: true, monISO: breakMon, days: buildWeek(breakMon) });
+        cursor = nextMonday(addDays(breakMon, 4));
+      }
+    } else {
+      const days = buildWeek(cursor);
+      entries.push({ ...w, monISO: cursor, days });
+      cursor = nextMonday(addDays(cursor, 4));
+    }
+  });
+
+  return entries;
+};
+
+const SCHEDULE = buildSchedule();
+const BOOTCAMP_START = SCHEDULE.find(e => e.days && e.days.length > 0)?.days[0] || "2026-06-01";
+const lastStudyWeek = [...SCHEDULE].reverse().find(e => e.days && e.days.length > 0);
+const BOOTCAMP_END = lastStudyWeek ? lastStudyWeek.days[4] : "2026-09-30";
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
 const parseDate = (iso) => {
@@ -77,21 +157,7 @@ const addDays = (iso, n) => {
   return yyyy + "-" + mm + "-" + dd;
 };
 
-// Build bootcamp week structure: array of 6 weeks, each with 7 day ISO strings
-const buildBootcampWeeks = () => {
-  const weeks = [];
-  for (let w = 0; w < BOOTCAMP_WEEKS; w++) {
-    const days = [];
-    for (let d = 0; d < 7; d++) {
-      days.push(addDays(BOOTCAMP_START, w * 7 + d));
-    }
-    weeks.push(days);
-  }
-  return weeks;
-};
 
-const BOOTCAMP_WEEKS_DATA = buildBootcampWeeks();
-const BOOTCAMP_END = addDays(BOOTCAMP_START, 41);
 
 // localStorage helpers
 function loadFromStorage(key, fallback) {
@@ -151,7 +217,7 @@ function Dashboard({ sessions }) {
           { val: `${streak}일`, label: "DAY STREAK", sub: streak > 0 ? "Keep going!" : "Start today!", accent: "#b07aaa" },
           { val: fmtMin(todayMin || 0), label: "TODAY", sub: todayMin >= 30 ? "Goal met ✓" : "Goal: 30m", accent: "#9a7fc4" },
           { val: fmtMin(weekMin), label: "THIS WEEK", sub: `${pct}% of 3.5hr goal`, accent: "#7a9cc4" },
-          { val: sessions.length, label: "TOTAL SESSIONS", sub: "", accent: "#c49ab4" },
+
         ].map((c) => (
           <div key={c.label} style={{ background: "#fff", borderRadius: 10, padding: "13px 14px", borderLeft: `3px solid ${c.accent}` }}>
             <div style={{ fontSize: 24, fontWeight: 700, color: "#1a1a1a", lineHeight: 1 }}>{c.val}</div>
@@ -410,19 +476,33 @@ function History({ sessions, onDelete, onImport }) {
     };
     reader.readAsText(file);
   };
+  const totalMin = sessions.reduce((a, s) => a + s.duration, 0);
+
   return (
     <div style={{ padding: "16px 14px" }}>
+      {/* Stats row */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+        <div style={{ background: "#fff", borderRadius: 10, padding: "13px 14px", borderLeft: "3px solid #b07aaa" }}>
+          <div style={{ fontSize: 22, fontWeight: 700, color: "#1a1a1a", lineHeight: 1 }}>{fmtMin(totalMin)}</div>
+          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1, color: "#888", marginTop: 5, textTransform: "uppercase" }}>Total Study Time</div>
+        </div>
+        <div style={{ background: "#fff", borderRadius: 10, padding: "13px 14px", borderLeft: "3px solid #9a7fc4" }}>
+          <div style={{ fontSize: 22, fontWeight: 700, color: "#1a1a1a", lineHeight: 1 }}>{sessions.length}</div>
+          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1, color: "#888", marginTop: 5, textTransform: "uppercase" }}>Total Sessions</div>
+        </div>
+      </div>
+
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <div style={ss.sectionLabel}>SESSION HISTORY</div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
           {(exportFeedback || importFeedback) && (
             <span style={{ fontSize: 11, color: "#7a6aaa", fontWeight: 600 }}>{exportFeedback || importFeedback}</span>
           )}
+          <button onClick={exportCSV} style={ss.outlineBtn}>⬆ Export CSV</button>
           <label style={{ ...ss.outlineBtn, display: "inline-block", cursor: "pointer" }}>
-            ⬆ Import CSV
+            ⬇ Import CSV
             <input type="file" accept=".csv,text/csv,text/plain,application/vnd.ms-excel" onChange={importCSV} style={{ display: "none" }} />
           </label>
-          <button onClick={exportCSV} style={ss.outlineBtn}>⬇ Export CSV</button>
         </div>
       </div>
 
@@ -458,123 +538,150 @@ function History({ sessions, onDelete, onImport }) {
 }
 
 function Programs({ sessions, onLogSession }) {
-  const [expandedWeek, setExpandedWeek] = useState(null);
+  const [expandedIdx, setExpandedIdx] = useState(null);
   const [modalDate, setModalDate] = useState(null);
   const today = todayISO();
 
-  // Which dates have sessions logged?
-  // Only count sessions that fall within the bootcamp date range
+  // Only sessions within bootcamp date range count for day grid
   const loggedDates = new Set(
     sessions
       .filter((s) => s.date >= BOOTCAMP_START && s.date <= BOOTCAMP_END)
       .map((s) => s.date)
   );
 
-  // Bootcamp status
-  const bootcampStarted = today >= BOOTCAMP_START;
-  const bootcampEnded = today > BOOTCAMP_END;
+  const totalStudyDays = loggedDates.size;
+  const totalStudyWeeks = SCHEDULE.filter(e => !e.isHoliday && !e.isBreak);
+  const totalPossibleDays = totalStudyWeeks.reduce((a, e) => a + e.days.length, 0);
 
-  // Current week index (0-based)
-  const currentWeekIdx = bootcampStarted
-    ? Math.min(Math.floor((parseDate(today) - parseDate(BOOTCAMP_START)) / (7 * 86400000)), 5)
-    : null;
-
-  // Auto-expand current week
-  const effectiveExpanded = expandedWeek !== null ? expandedWeek : currentWeekIdx;
+  // Current week index in SCHEDULE
+  const currentIdx = SCHEDULE.findIndex(e =>
+    e.days && e.days.length > 0 && e.days[0] <= today && e.days[e.days.length - 1] >= today
+  );
+  const effectiveExpanded = expandedIdx !== null ? expandedIdx : (currentIdx >= 0 ? currentIdx : null);
 
   const dayOfWeekLabel = (iso) =>
     parseDate(iso).toLocaleDateString("en-US", { weekday: "short" });
 
+  const fmtShortRange = (days) =>
+    days.length > 0 ? fmtShort(days[0]) + " – " + fmtShort(days[days.length - 1]) : "";
+
+  // Phase labels
+  let lastPhase = null;
+
   return (
     <div style={{ padding: "16px 14px" }}>
-      {/* Bootcamp header */}
+      {/* Header */}
       <div style={{ background: "#6b5b8a", borderRadius: 12, padding: "18px 16px", marginBottom: 16, color: "#f5f2eb" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
           <span style={{ fontSize: 28 }}>🚀</span>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 16 }}>6-Week Bootcamp</div>
-            <div style={{ fontSize: 12, opacity: 0.65 }}>
-              {bootcampEnded ? "Completed!" : bootcampStarted ? "In progress" : `Starts ${fmtShort(BOOTCAMP_START)}`}
-            </div>
+            <div style={{ fontWeight: 700, fontSize: 16 }}>20-Week Bootcamp</div>
+            <div style={{ fontSize: 12, opacity: 0.65 }}>TTMIK Level 1 & 2 · Mon–Fri · 55 Lessons</div>
           </div>
         </div>
-        {/* Overall progress bar */}
-        {bootcampStarted && (
-          <>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, opacity: 0.65, marginBottom: 5 }}>
-              <span>{fmtShort(BOOTCAMP_START)}</span>
-              <span>{loggedDates.size} days logged</span>
-              <span>{fmtShort(BOOTCAMP_END)}</span>
-            </div>
-            <div style={{ background: "rgba(255,255,255,0.15)", borderRadius: 4, height: 7 }}>
-              <div style={{
-                width: `${Math.min(100, (loggedDates.size / 42) * 100)}%`,
-                background: "#9b7fb6", height: "100%", borderRadius: 4,
-              }} />
-            </div>
-          </>
-        )}
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, opacity: 0.65, marginBottom: 5 }}>
+          <span>{fmtShort(BOOTCAMP_START)}</span>
+          <span>{totalStudyDays} / {totalPossibleDays} days logged</span>
+          <span>{fmtShort(BOOTCAMP_END)}</span>
+        </div>
+        <div style={{ background: "rgba(255,255,255,0.15)", borderRadius: 4, height: 7 }}>
+          <div style={{ width: `${Math.min(100, (totalStudyDays / totalPossibleDays) * 100)}%`, background: "#c4a8d8", height: "100%", borderRadius: 4 }} />
+        </div>
       </div>
 
-      {/* Week accordions */}
-      {BOOTCAMP_WEEKS_DATA.map((days, wIdx) => {
-        const weekNum = wIdx + 1;
-        const weekStart = days[0];
-        const weekEnd = days[6];
-        const isExpanded = effectiveExpanded === wIdx;
-        const isCurrent = currentWeekIdx === wIdx;
-        const weekLogged = days.filter((d) => loggedDates.has(d)).length;
-        const weekLocked = today < weekStart;
+      {/* Schedule */}
+      {SCHEDULE.map((entry, idx) => {
+        const showPhaseLabel = !entry.isHoliday && !entry.isBreak && entry.phase !== lastPhase;
+        if (!entry.isHoliday && !entry.isBreak) lastPhase = entry.phase;
+
+        const isExpanded = effectiveExpanded === idx;
+        const isCurrent = idx === currentIdx;
+        const weekLogged = entry.days ? entry.days.filter(d => loggedDates.has(d)).length : 0;
+        const weekLocked = entry.days && entry.days.length > 0 && today < entry.days[0];
 
         return (
-          <div key={wIdx} style={{ background: "#fff", borderRadius: 10, marginBottom: 10, overflow: "hidden", border: isCurrent ? "2px solid #3a5a40" : "1.5px solid #e0ddd5" }}>
-            {/* Week header — tap to expand */}
-            <button
-              onClick={() => setExpandedWeek(isExpanded ? null : wIdx)}
-              style={{ width: "100%", background: "none", border: "none", cursor: weekLocked ? "default" : "pointer", padding: "13px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontWeight: 700, fontSize: 14, color: weekLocked ? "#aaa" : "#6b5b8a" }}>
-                  Week {weekNum}
-                </span>
-                {isCurrent && <span style={{ background: "#7a6aaa", color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 10, padding: "2px 8px" }}>NOW</span>}
-                <span style={{ fontSize: 11, color: "#aaa" }}>{fmtShort(weekStart)} – {fmtShort(weekEnd)}</span>
+          <div key={idx}>
+            {/* Phase label */}
+            {showPhaseLabel && (
+              <div style={{ ...ss.sectionLabel, marginTop: idx > 0 ? 20 : 4 }}>
+                {entry.phase === 1 ? "PHASE 1 — LEVEL 1 FOUNDATIONS" : "PHASE 2 — LEVEL 2 GRAMMAR"}
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 12, color: weekLogged === 7 ? "#3a5a40" : "#aaa", fontWeight: 600 }}>{weekLogged}/7</span>
-                <span style={{ color: "#aaa", fontSize: 14 }}>{isExpanded ? "▲" : "▼"}</span>
+            )}
+
+            {/* Holiday week */}
+            {entry.isHoliday && (
+              <div style={{ background: "#fdf8fe", borderRadius: 10, marginBottom: 8, padding: "12px 14px", border: "1.5px dashed #d0c8d8", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 13, color: "#bbb", fontStyle: "italic" }}>✈️ Holiday — {fmtShort(HOLIDAY_START)} to {fmtShort(HOLIDAY_END)}</span>
+                <span style={{ fontSize: 11, color: "#ccc" }}>away</span>
               </div>
-            </button>
+            )}
 
-            {/* Day grid */}
-            {isExpanded && (
-              <div style={{ padding: "4px 14px 14px", display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 6 }}>
-                {days.map((dayISO) => {
-                  const isLogged = loggedDates.has(dayISO);
-                  const isToday = dayISO === today;
-                  const isFuture = dayISO > today;
-                  const isPast = dayISO < today && !isLogged;
+            {/* Break week */}
+            {entry.isBreak && (
+              <div style={{ marginTop: 20 }}>
+                <div style={{ ...ss.sectionLabel }}>BREAK — BETWEEN LEVELS</div>
+                <div style={{ background: "#fdf8fe", borderRadius: 10, marginBottom: 8, padding: "14px", border: "1.5px dashed #b49ac4", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontSize: 13, color: "#9a7fc4", fontWeight: 600 }}>Rest week</div>
+                    <div style={{ fontSize: 11, color: "#bbb" }}>{fmtShortRange(entry.days)} · Revisit anything wobbly</div>
+                  </div>
+                  {isCurrent && <span style={{ background: "#7a6aaa", color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 10, padding: "2px 8px" }}>NOW</span>}
+                </div>
+              </div>
+            )}
 
-                  return (
-                    <button
-                      key={dayISO}
-                      onClick={() => !isFuture && setModalDate(dayISO)}
-                      style={{
-                        display: "flex", flexDirection: "column", alignItems: "center",
-                        padding: "8px 4px", borderRadius: 8, border: isToday ? "2px solid #7a6aaa" : "1.5px solid #e0ddd5",
-                        background: isLogged ? "#7a6aaa" : isFuture ? "#faf9f6" : "#fff",
-                        cursor: isFuture ? "default" : "pointer",
-                        opacity: isFuture ? 0.4 : 1,
-                      }}>
-                      <span style={{ fontSize: 9, fontWeight: 700, color: isLogged ? "rgba(255,255,255,0.7)" : "#aaa", textTransform: "uppercase" }}>
-                        {dayOfWeekLabel(dayISO)}
-                      </span>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: isLogged ? "#fff" : isToday ? "#7a6aaa" : isPast ? "#ccc" : "#2d2d2d", marginTop: 2 }}>
-                        {parseDate(dayISO).getDate()}
-                      </span>
-                      {isLogged && <span style={{ fontSize: 10, marginTop: 2 }}>✓</span>}
-                    </button>
-                  );
-                })}
+            {/* Study week accordion */}
+            {!entry.isHoliday && !entry.isBreak && (
+              <div style={{ background: "#fff", borderRadius: 10, marginBottom: 8, overflow: "hidden", border: isCurrent ? "2px solid #7a6aaa" : "1.5px solid #e8e0f0" }}>
+                <button
+                  onClick={() => setExpandedIdx(isExpanded ? null : idx)}
+                  style={{ width: "100%", background: "none", border: "none", cursor: "pointer", padding: "12px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+                    <span style={{ fontWeight: 700, fontSize: 13, color: weekLocked ? "#bbb" : "#6b5b8a", flexShrink: 0 }}>{entry.label}</span>
+                    {isCurrent && <span style={{ background: "#7a6aaa", color: "#fff", fontSize: 9, fontWeight: 700, borderRadius: 10, padding: "2px 7px", flexShrink: 0 }}>NOW</span>}
+                    <span style={{ fontSize: 10, color: "#bbb", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{entry.sub}</span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0, marginLeft: 8 }}>
+                    <span style={{ fontSize: 11, color: weekLogged === 5 ? "#9b7fb6" : "#bbb", fontWeight: 600 }}>{weekLogged}/5</span>
+                    <span style={{ color: "#bbb", fontSize: 12 }}>{isExpanded ? "▲" : "▼"}</span>
+                  </div>
+                </button>
+
+                {isExpanded && (
+                  <div style={{ padding: "2px 14px 14px" }}>
+                    <div style={{ fontSize: 10, color: "#aaa", marginBottom: 8 }}>{fmtShortRange(entry.days)}</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 6 }}>
+                      {entry.days.map((dayISO) => {
+                        const isLogged = loggedDates.has(dayISO);
+                        const isToday = dayISO === today;
+                        const isFuture = dayISO > today;
+                        const isPast = dayISO < today && !isLogged;
+
+                        return (
+                          <button
+                            key={dayISO}
+                            onClick={() => !isFuture && setModalDate(dayISO)}
+                            style={{
+                              display: "flex", flexDirection: "column", alignItems: "center",
+                              padding: "8px 4px", borderRadius: 8,
+                              border: isToday ? "2px solid #7a6aaa" : "1.5px solid #e8e0f0",
+                              background: isLogged ? "#9b7fb6" : isFuture ? "#fdf8fe" : "#fff",
+                              cursor: isFuture ? "default" : "pointer",
+                              opacity: isFuture ? 0.4 : 1,
+                            }}>
+                            <span style={{ fontSize: 9, fontWeight: 700, color: isLogged ? "rgba(255,255,255,0.75)" : "#bbb", textTransform: "uppercase" }}>
+                              {dayOfWeekLabel(dayISO)}
+                            </span>
+                            <span style={{ fontSize: 13, fontWeight: 700, color: isLogged ? "#fff" : isToday ? "#7a6aaa" : isPast ? "#ccc" : "#2d2d2d", marginTop: 2 }}>
+                              {parseDate(dayISO).getDate()}
+                            </span>
+                            {isLogged && <span style={{ fontSize: 10, marginTop: 1 }}>✓</span>}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -595,13 +702,8 @@ function Programs({ sessions, onLogSession }) {
         ))}
       </div>
 
-      {/* Log session modal */}
       {modalDate && (
-        <LogSessionModal
-          date={modalDate}
-          onSave={onLogSession}
-          onClose={() => setModalDate(null)}
-        />
+        <LogSessionModal date={modalDate} onSave={onLogSession} onClose={() => setModalDate(null)} />
       )}
     </div>
   );
