@@ -52,12 +52,15 @@ const DURATIONS = [15, 30, 45, 60, 90];
 const RESOURCES = [
   { icon: "📘", name: "Talk To Me In Korean", desc: "Beginner Extended + 50-day package" },
   { icon: "🎧", name: "Pimsleur", desc: "Lifetime access via app" },
-  { icon: "🎓", name: "Coursera", desc: "Access through professional org" },
+  { icon: "🦌", name: "LingoDeer", desc: "3-year subscription" },
+  { icon: "📗", name: "TTMIK", desc: "1-year subscription" },
+  { icon: "🏫", name: "King Sejong Institute", desc: "Free online course" },
   { icon: "🌹", name: "Rosetta Stone", desc: "Lifetime access" },
+  { icon: "🎓", name: "Coursera", desc: "Access through professional org" },
 ];
 
 // ── Bootcamp schedule ────────────────────────────────────────────────────────
-// 20 weeks · TTMIK L1+L2 · Mon–Fri · starts Jun 1 2026
+// 23 weeks · TTMIK L1+L2 (all 55 lessons) · Mon–Fri · starts Jun 1 2026
 // Holiday week: Jun 7–13 (greyed out, not counted)
 // Break week: after W11 (between levels)
 
@@ -72,30 +75,33 @@ const buildSchedule = () => {
 
   const weeks = [
     // Phase 1 — Level 1 Foundations
-    { label: "W1",  phase: 1, sub: "L1 · L3 · L4 — Greetings" },
+    { label: "W1",  phase: 1, sub: "L1 · L3 · L4 — Greetings · Pimsleur 1–2" },
     // Holiday
     null,
-    { label: "W2",  phase: 1, sub: "L5 · L2 · L6 — 이에요/예요" },
-    { label: "W3",  phase: 1, sub: "L7 · L8 · L10 — 이/저/그 · 있어요/없어요" },
-    { label: "W4",  phase: 1, sub: "L9 — Topic/subject particles 은/는 · 이/가" },
-    { label: "W5",  phase: 1, sub: "L11 · L13 · L14 — 주세요 · 고 싶어요" },
-    { label: "W6",  phase: 1, sub: "L15 · L20 — Numbers (sino-Korean + native)" },
-    { label: "W7",  phase: 1, sub: "L16 — Present tense 아/어/여요" },
-    { label: "W8",  phase: 1, sub: "L17 — Past tense 았/었/였어요" },
-    { label: "W9",  phase: 1, sub: "L18 · L19 · L23 — Location particles · 어디 · 에 · 에서" },
-    { label: "W10", phase: 1, sub: "L24 · L21 · L22 — Why/how · negation · 하다 verbs" },
-    { label: "W11", phase: 1, sub: "L25 · Review — 에서/부터/까지 · Level 1 review" },
+    { label: "W2",  phase: 1, sub: "L5 · L2 · L6 — 이에요/예요 · Pimsleur 3–4" },
+    { label: "W3",  phase: 1, sub: "L7 · L8 · L10 — 이/저/그 · 있어요/없어요 · Pimsleur 5–6" },
+    { label: "W4",  phase: 1, sub: "L9 — 은/는 · 이/가 (full week) · Pimsleur 7–8" },
+    { label: "W5",  phase: 1, sub: "L11 · L13 · L14 — 주세요 · 고 싶어요 · Pimsleur 9–10" },
+    { label: "W6",  phase: 1, sub: "L15 · L20 — Numbers sino-Korean + native · Pimsleur 11–12" },
+    { label: "W7",  phase: 1, sub: "L16 — Present tense 아/어/여요 (full week) · Pimsleur 13–14" },
+    { label: "W8",  phase: 1, sub: "L17 — Past tense 았/었/였어요 (full week) · Pimsleur 15–16" },
+    { label: "W9",  phase: 1, sub: "L18 · L19 · L23 — Location particles · 에 · 에서 · Pimsleur 17–18" },
+    { label: "W10", phase: 1, sub: "L24 · L21 · L22 — Why/how · negation · 하다 · Pimsleur 19–20" },
+    { label: "W11", phase: 1, sub: "L25 · Review — 에서/부터/까지 · Level 1 review · Pimsleur 21–22" },
     // Break between levels
     null,
     // Phase 2 — Level 2
-    { label: "W13", phase: 2, sub: "L1 — Future tense (으)ㄹ 거예요" },
-    { label: "W14", phase: 2, sub: "L2 — Object particles 을/를" },
-    { label: "W15", phase: 2, sub: "L3 · L6 · L4 — Connectors 그리고 · 그래서 · 그렇지만" },
-    { label: "W16", phase: 2, sub: "L7 · L10 · L5 — 한테/한테서 · 고 있어요 · 요일" },
-    { label: "W17", phase: 2, sub: "L8 · L9 · L12 — Time · counters · dates" },
-    { label: "W18", phase: 2, sub: "L13 · L14 · L15 — 도 (too/also) · 만 (only)" },
-    { label: "W19", phase: 2, sub: "L17 · L20 · L21 — Can/cannot · must · more than" },
-    { label: "W20", phase: 2, sub: "L23 · L26–L28 · L11 — If · imperative · 자기소개" },
+    { label: "W13", phase: 2, sub: "L1 — Future tense (으)ㄹ 거예요 · Pimsleur 25–26" },
+    { label: "W14", phase: 2, sub: "L2 — Object particles 을/를 · Pimsleur 27–28" },
+    { label: "W15", phase: 2, sub: "L3 · L6 · L4 — Connectors 그리고 · 그래서 · 그렇지만 · Pimsleur 29–30" },
+    { label: "W16", phase: 2, sub: "L5 · L7 · L10 — 요일 · 한테/한테서 · 고 있어요 · Pimsleur L2 1–2" },
+    { label: "W17", phase: 2, sub: "L8 · L9 · L12 — Telling time · counters · dates · Pimsleur L2 3–4" },
+    { label: "W18", phase: 2, sub: "L11 · L13 · L14 — 자기소개 · 도 parts 1 & 2 · Pimsleur L2 5–6" },
+    { label: "W19", phase: 2, sub: "L15 · L16 · L18 — 만 · adverbs · 잘하다/못하다 · Pimsleur L2 7–8" },
+    { label: "W20", phase: 2, sub: "L17 · L19 · L22 — Can/cannot · -는 것 · 좋다 vs 좋아하다 · Pimsleur L2 9–10" },
+    { label: "W21", phase: 2, sub: "L20 · L21 · L23 — Must · more than · if/conditionals · Pimsleur L2 11–12" },
+    { label: "W22", phase: 2, sub: "L24 · L25 · L26 · L27 — Still/already · imperative · please do · Pimsleur L2 13–14" },
+    { label: "W23", phase: 2, sub: "L28 · L29 · L30 — Method · all/more · don't · 자기소개 capstone · Pimsleur L2 15–16" },
   ];
 
   weeks.forEach((w, i) => {
@@ -132,14 +138,23 @@ const fmtShort = (iso) => parseDate(iso).toLocaleDateString("en-US", { month: "s
 
 const getWeekStart = (iso) => {
   const d = parseDate(iso);
-  const day = d.getDay();
-  const mon = new Date(d);
-  mon.setDate(d.getDate() - day + (day === 0 ? -6 : 1));
-  return mon.toISOString().slice(0, 10);
+  const day = d.getDay(); // 0=Sun
+  const sun = new Date(d);
+  sun.setDate(d.getDate() - day);
+  const yyyy = sun.getFullYear();
+  const mm = String(sun.getMonth() + 1).padStart(2, "0");
+  const dd = String(sun.getDate()).padStart(2, "0");
+  return yyyy + "-" + mm + "-" + dd;
 };
 
-const fmtWeekLabel = (iso) =>
-  "Week of " + parseDate(iso).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+const fmtWeekLabel = (iso) => {
+  const start = parseDate(iso);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  const fmt1 = start.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const fmt2 = end.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return fmt1 + " – " + fmt2;
+};
 
 const getTag = (id) => ACTIVITY_TAGS.find((t) => t.id === id);
 // Map legacy tag labels/ids to current ones
@@ -159,6 +174,25 @@ const resolveTagLabel = (label) => {
 const fmtMin = (m) => m < 60 ? `${m}m` : `${Math.floor(m / 60)}h${m % 60 ? " " + (m % 60) + "m" : ""}`;
 
 
+
+// ── Streak freeze helpers ─────────────────────────────────────────────────────
+const FREEZE_KEY = "ks_freezeDays";
+const FREEZE_MONTH_KEY = "ks_freezeMonth";
+const MAX_FREEZES = 3;
+
+const getCurrentMonth = () => new Date().toISOString().slice(0, 7); // "YYYY-MM"
+
+const getFreezeDays = () => loadFromStorage(FREEZE_KEY, []);
+const getFreezeMonth = () => loadFromStorage(FREEZE_MONTH_KEY, "");
+
+const refreshFreezes = () => {
+  // Reset on new month
+  const month = getCurrentMonth();
+  if (getFreezeMonth() !== month) {
+    saveToStorage(FREEZE_KEY, []);
+    saveToStorage(FREEZE_MONTH_KEY, month);
+  }
+};
 
 // localStorage helpers
 function loadFromStorage(key, fallback) {
@@ -187,7 +221,7 @@ function TagBadge({ id }) {
   );
 }
 
-function Dashboard({ sessions }) {
+function Dashboard({ sessions, freezeDays, onFreeze, onUnfreeze }) {
   const today = todayISO();
   const weekStart = getWeekStart(today);
   const weekGoalMin = 210;
@@ -195,13 +229,18 @@ function Dashboard({ sessions }) {
   const todayMin = sessions.filter((s) => s.date === today).reduce((a, s) => a + s.duration, 0);
   const weekMin = sessions.filter((s) => s.date >= weekStart).reduce((a, s) => a + s.duration, 0);
 
+  // Streak: frozen days count as studied
+  const seen = new Set([...sessions.map((s) => s.date), ...freezeDays]);
   let streak = 0;
-  const seen = new Set(sessions.map((s) => s.date));
   const check = new Date();
   while (seen.has(check.toISOString().slice(0, 10))) {
     streak++;
     check.setDate(check.getDate() - 1);
   }
+
+  const isTodayFrozen = freezeDays.includes(today);
+  const freezesUsed = freezeDays.filter(d => d.startsWith(getCurrentMonth())).length;
+  const freezesLeft = MAX_FREEZES - freezesUsed;
 
   const weekActivities = {};
   sessions.filter((s) => s.date >= weekStart).forEach((s) =>
@@ -218,7 +257,6 @@ function Dashboard({ sessions }) {
           { val: `${streak}일`, label: "DAY STREAK", sub: streak > 0 ? "Keep going!" : "Start today!", accent: "#b07aaa" },
           { val: fmtMin(todayMin || 0), label: "TODAY", sub: todayMin >= 30 ? "Goal met ✓" : "Goal: 30m", accent: "#9a7fc4" },
           { val: fmtMin(weekMin), label: "THIS WEEK", sub: `${pct}% of 3.5hr goal`, accent: "#7a9cc4" },
-
         ].map((c) => (
           <div key={c.label} style={{ background: "#fff", borderRadius: 10, padding: "13px 14px", borderLeft: `3px solid ${c.accent}` }}>
             <div style={{ fontSize: 24, fontWeight: 700, color: "#1a1a1a", lineHeight: 1 }}>{c.val}</div>
@@ -226,6 +264,41 @@ function Dashboard({ sessions }) {
             {c.sub && <div style={{ fontSize: 11, color: "#aaa", marginTop: 2 }}>{c.sub}</div>}
           </div>
         ))}
+      </div>
+
+      {/* Streak freeze */}
+      <div style={{ background: "#fff", borderRadius: 10, padding: "13px 14px", marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#6b5b8a" }}>
+            🧊 Streak Freeze
+          </div>
+          <div style={{ fontSize: 11, color: "#aaa", marginTop: 2 }}>
+            {freezesLeft} of {MAX_FREEZES} remaining this month
+            {isTodayFrozen ? " · today is frozen ❄️" : ""}
+          </div>
+          <div style={{ display: "flex", gap: 4, marginTop: 6 }}>
+            {[0,1,2].map(i => (
+              <div key={i} style={{
+                width: 24, height: 8, borderRadius: 4,
+                background: i < freezesLeft ? "#b49ac4" : "#e8e0f0"
+              }} />
+            ))}
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 6 }}>
+          {isTodayFrozen ? (
+            <button onClick={onUnfreeze} style={{ ...ss.outlineBtn, fontSize: 11, padding: "5px 10px", borderColor: "#c47aaa", color: "#c47aaa" }}>
+              Unfreeze
+            </button>
+          ) : (
+            <button
+              onClick={onFreeze}
+              disabled={freezesLeft === 0}
+              style={{ ...ss.outlineBtn, fontSize: 11, padding: "5px 10px", opacity: freezesLeft === 0 ? 0.4 : 1 }}>
+              Freeze today
+            </button>
+          )}
+        </div>
       </div>
 
       <div style={ss.sectionLabel}>WEEKLY PROGRESS</div>
@@ -728,7 +801,11 @@ const TABS = [
 
 export default function App() {
   const [tab, setTab] = useState("dashboard");
-  const [sessions, setSessions] = useState(() => loadFromStorage("ks_sessions", []));
+  const [sessions, setSessions] = useState(() => {
+    refreshFreezes();
+    return loadFromStorage("ks_sessions", []);
+  });
+  const [freezeDays, setFreezeDays] = useState(() => loadFromStorage(FREEZE_KEY, []));
 
   const setSessions_ = (updater) => {
     setSessions((prev) => {
@@ -748,6 +825,24 @@ export default function App() {
   };
 
   const deleteSession = (id) => setSessions_((prev) => prev.filter((s) => s.id !== id));
+
+  const freezeToday = () => {
+    const today = todayISO();
+    const month = getCurrentMonth();
+    const current = loadFromStorage(FREEZE_KEY, []);
+    const thisMonth = current.filter(d => d.startsWith(month));
+    if (thisMonth.length >= MAX_FREEZES || current.includes(today)) return;
+    const updated = [...current, today];
+    saveToStorage(FREEZE_KEY, updated);
+    setFreezeDays(updated);
+  };
+
+  const unfreezeToday = () => {
+    const today = todayISO();
+    const updated = freezeDays.filter(d => d !== today);
+    saveToStorage(FREEZE_KEY, updated);
+    setFreezeDays(updated);
+  };
 
   const importSessions = (imported) => {
     setSessions_((prev) => {
@@ -784,7 +879,7 @@ export default function App() {
       </div>
 
       <div style={{ flex: 1, overflowY: "auto" }}>
-        {tab === "dashboard" && <Dashboard sessions={sessions} />}
+        {tab === "dashboard" && <Dashboard sessions={sessions} freezeDays={freezeDays} onFreeze={freezeToday} onUnfreeze={unfreezeToday} />}
         {tab === "log" && <LogSession onSave={addSession} />}
         {tab === "history" && <History sessions={sessions} onDelete={deleteSession} onImport={importSessions} />}
         {tab === "programs" && <Programs sessions={sessions} onLogSession={addSessionFromPrograms} />}
