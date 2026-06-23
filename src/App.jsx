@@ -50,12 +50,10 @@ const RESOURCES = [
 // 23 weeks · TTMIK L1+L2 (all 55 lessons) · Mon–Fri
 // Progress-based, not date-tied. Each week has 5 day slots to check off.
 // isBreak = optional rest week between phases
-// isHoliday = travel week, shown but not counted
 
 const SCHEDULE = [
   // Phase 1 — Level 1 Foundations
   { label: "W1",  phase: 1, days: 5, sub: "L1 · L3 · L4 — Greetings · Pimsleur 1–2" },
-  { label: "Holiday", isHoliday: true, days: 0, sub: "Travel week — not counted" },
   { label: "W2",  phase: 1, days: 5, sub: "L5 · L2 · L6 — 이에요/예요 · Pimsleur 3–4" },
   { label: "W3",  phase: 1, days: 5, sub: "L7 · L8 · L10 — 이/저/그 · 있어요/없어요 · Pimsleur 5–6" },
   { label: "W4",  phase: 1, days: 5, sub: "L9 — 은/는 · 이/가 (full week) · Pimsleur 7–8" },
@@ -82,7 +80,7 @@ const SCHEDULE = [
   { label: "W23", phase: 2, days: 5, sub: "L28 · L29 · L30 — Method · all/more · don't · 자기소개 capstone · Pimsleur L2 15–16" },
 ];
 
-const STUDY_WEEKS = SCHEDULE.filter(e => !e.isHoliday && !e.isBreak);
+const STUDY_WEEKS = SCHEDULE.filter(e => !e.isBreak);
 const TOTAL_STUDY_DAYS = STUDY_WEEKS.reduce((a, w) => a + w.days, 0); // 115
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
@@ -575,7 +573,7 @@ function Programs({ sessions, onLogSession, bootcampProgress, onToggleDay }) {
   const phaseHeaderAt = new Set();
   let _lastPhase = null;
   SCHEDULE.forEach((entry, idx) => {
-    if (!entry.isHoliday && !entry.isBreak && entry.phase !== _lastPhase) {
+    if (!entry.isBreak && entry.phase !== _lastPhase) {
       phaseHeaderAt.add(idx);
       _lastPhase = entry.phase;
     }
@@ -583,7 +581,7 @@ function Programs({ sessions, onLogSession, bootcampProgress, onToggleDay }) {
 
   // Auto-expand first incomplete study week
   const firstIncompleteIdx = SCHEDULE.findIndex((e, i) => {
-    if (e.isHoliday || e.isBreak) return false;
+    if (e.isBreak) return false;
     const checked = (bootcampProgress[i] || []).length;
     return checked < e.days;
   });
@@ -616,7 +614,7 @@ function Programs({ sessions, onLogSession, bootcampProgress, onToggleDay }) {
         const showPhaseLabel = phaseHeaderAt.has(idx);
         const isExpanded = effectiveExpanded === idx;
         const checked = bootcampProgress[idx] || [];
-        const weekDone = !entry.isHoliday && !entry.isBreak && checked.length >= entry.days;
+        const weekDone = !entry.isBreak && checked.length >= entry.days;
 
         return (
           <div key={idx}>
@@ -626,14 +624,7 @@ function Programs({ sessions, onLogSession, bootcampProgress, onToggleDay }) {
               </div>
             )}
 
-            {/* Holiday */}
-            {entry.isHoliday && (
-              <div style={{ background: "#fdf8fe", borderRadius: 10, marginBottom: 8, padding: "12px 14px", border: "1.5px dashed #d0c8d8", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 13, color: "#bbb", fontStyle: "italic" }}>✈️ Holiday week — not counted</span>
-              </div>
-            )}
-
-            {/* Break */}
+{/* Break */}
             {entry.isBreak && (
               <div style={{ marginTop: 20, marginBottom: 4 }}>
                 <div style={ss.sectionLabel}>BREAK — BETWEEN LEVELS</div>
@@ -645,7 +636,7 @@ function Programs({ sessions, onLogSession, bootcampProgress, onToggleDay }) {
             )}
 
             {/* Study week */}
-            {!entry.isHoliday && !entry.isBreak && (
+            {!entry.isBreak && (
               <div style={{ background: "#fff", borderRadius: 10, marginBottom: 8, overflow: "hidden", border: weekDone ? "2px solid #9b7fb6" : "1.5px solid #e8e0f0" }}>
                 <button
                   onClick={() => setExpandedIdx(isExpanded ? null : idx)}
