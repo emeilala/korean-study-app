@@ -46,42 +46,26 @@ const RESOURCES = [
   { icon: "🎓", name: "Coursera", desc: "Access through professional org" },
 ];
 
-// ── Bootcamp schedule ────────────────────────────────────────────────────────
-// 23 weeks · TTMIK L1+L2 (all 55 lessons) · Mon–Fri
-// Progress-based, not date-tied. Each week has 5 day slots to check off.
-// isBreak = optional rest week between phases
+// ── KSI 1A Class schedule ────────────────────────────────────────────────────
+// 10 weeks · Online Sejong Institute Beginner 1A
+// Sundays 12:00–14:00 Berlin · Jul 27 – Oct 4 2026
+// Each week: VOD + Activities (+ Writing assignment on W3, W6) + Live class
+// tasks: vod, activities, writing (optional), liveClass
 
-const SCHEDULE = [
-  // Phase 1 — Level 1 Foundations
-  { label: "W1",  phase: 1, days: 5, sub: "L1 · L3 · L4 — Greetings · Pimsleur 1–2" },
-  { label: "W2",  phase: 1, days: 5, sub: "L5 · L2 · L6 — 이에요/예요 · Pimsleur 3–4" },
-  { label: "W3",  phase: 1, days: 5, sub: "L7 · L8 · L10 — 이/저/그 · 있어요/없어요 · Pimsleur 5–6" },
-  { label: "W4",  phase: 1, days: 5, sub: "L9 — 은/는 · 이/가 (full week) · Pimsleur 7–8" },
-  { label: "W5",  phase: 1, days: 5, sub: "L11 · L13 · L14 — 주세요 · 고 싶어요 · Pimsleur 9–10" },
-  { label: "W6",  phase: 1, days: 5, sub: "L15 · L20 — Numbers sino-Korean + native · Pimsleur 11–12" },
-  { label: "W7",  phase: 1, days: 5, sub: "L16 — Present tense 아/어/여요 (full week) · Pimsleur 13–14" },
-  { label: "W8",  phase: 1, days: 5, sub: "L17 — Past tense 았/었/였어요 (full week) · Pimsleur 15–16" },
-  { label: "W9",  phase: 1, days: 5, sub: "L18 · L19 · L23 — Location particles · 에 · 에서 · Pimsleur 17–18" },
-  { label: "W10", phase: 1, days: 5, sub: "L24 · L21 · L22 — Why/how · negation · 하다 · Pimsleur 19–20" },
-  { label: "W11", phase: 1, days: 5, sub: "L25 · Review — 에서/부터/까지 · Level 1 review · Pimsleur 21–22" },
-  // Break between levels
-  { label: "Break", isBreak: true, days: 5, sub: "Optional — revisit anything wobbly, or rest · Pimsleur 23–24" },
-  // Phase 2 — Level 2 Grammar
-  { label: "W13", phase: 2, days: 5, sub: "L1 — Future tense (으)ㄹ 거예요 · Pimsleur 25–26" },
-  { label: "W14", phase: 2, days: 5, sub: "L2 — Object particles 을/를 · Pimsleur 27–28" },
-  { label: "W15", phase: 2, days: 5, sub: "L3 · L6 · L4 — Connectors 그리고 · 그래서 · 그렇지만 · Pimsleur 29–30" },
-  { label: "W16", phase: 2, days: 5, sub: "L5 · L7 · L10 — 요일 · 한테/한테서 · 고 있어요 · Pimsleur L2 1–2" },
-  { label: "W17", phase: 2, days: 5, sub: "L8 · L9 · L12 — Telling time · counters · dates · Pimsleur L2 3–4" },
-  { label: "W18", phase: 2, days: 5, sub: "L11 · L13 · L14 — 자기소개 · 도 parts 1 & 2 · Pimsleur L2 5–6" },
-  { label: "W19", phase: 2, days: 5, sub: "L15 · L16 · L18 — 만 · adverbs · 잘하다/못하다 · Pimsleur L2 7–8" },
-  { label: "W20", phase: 2, days: 5, sub: "L17 · L19 · L22 — Can/cannot · -는 것 · 좋다 vs 좋아하다 · Pimsleur L2 9–10" },
-  { label: "W21", phase: 2, days: 5, sub: "L20 · L21 · L23 — Must · more than · if/conditionals · Pimsleur L2 11–12" },
-  { label: "W22", phase: 2, days: 5, sub: "L24 · L25 · L26 · L27 — Still/already · imperative · please do · Pimsleur L2 13–14" },
-  { label: "W23", phase: 2, days: 5, sub: "L28 · L29 · L30 — Method · all/more · don't · 자기소개 capstone · Pimsleur L2 15–16" },
+const KSI_WEEKS = [
+  { num: 1,  sunday: "2026-07-27", topic: "자기소개",   title: "저는 한국 사람이에요",          grammar: "이다 / 은" },
+  { num: 2,  sunday: "2026-08-02", topic: "가족, 직업", title: "회사원이 아니에요",             grammar: "이 / 이 아니다" },
+  { num: 3,  sunday: "2026-08-09", topic: "일상생활",   title: "저도 드라마를 좋아합니다",       grammar: "-습니다/습니까 / 을 / 도", hasWriting: true },
+  { num: 4,  sunday: "2026-08-16", topic: "학교",       title: "여기가 지훈 씨의 학교입니까?",  grammar: "과, 하고 / 의" },
+  { num: 5,  sunday: "2026-08-23", topic: "날씨",       title: "날씨가 좋지 않아요",            grammar: "-어요 / -지 않다" },
+  { num: 6,  sunday: "2026-08-30", topic: "친구",       title: "친구한테 편지를 써요",           grammar: "에게, 한테 / 만", hasWriting: true },
+  { num: 7,  sunday: "2026-09-06", topic: "장소, 위치", title: "지금 어디에 있어요?",           grammar: "(장소)에 / 에서" },
+  { num: 8,  sunday: "2026-09-13", topic: "과거",       title: "토요일에 친구를 만났어요",       grammar: "-었- / (시간)에" },
+  { num: 9,  sunday: "2026-09-20", topic: "운동",       title: "저는 수영을 못해요",             grammar: "부터 / -지 못하다" },
+  { num: 10, sunday: "2026-09-27", topic: "약속",       title: "같이 점심을 먹을까요?",          grammar: "-을까요 / -읍시다 / -고" },
 ];
 
-const STUDY_WEEKS = SCHEDULE.filter(e => !e.isBreak);
-const TOTAL_STUDY_DAYS = STUDY_WEEKS.reduce((a, w) => a + w.days, 0); // 115
+const KSI_TOTAL_TASKS = KSI_WEEKS.reduce((a, w) => a + (w.hasWriting ? 4 : 3), 0); // 32
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
 const fmt = (iso) => parseDate(iso).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
@@ -562,46 +546,59 @@ function History({ sessions, onDelete, onImport }) {
   );
 }
 
-function Programs({ sessions, onLogSession, bootcampProgress, onToggleDay }) {
+function Programs({ ksiProgress, onToggleTask }) {
   const [expandedIdx, setExpandedIdx] = useState(null);
+  const today = todayISO();
 
-  // Total checked days across all study weeks
-  const totalChecked = Object.values(bootcampProgress).reduce((a, days) => a + days.length, 0);
-  const pct = Math.min(100, Math.round((totalChecked / TOTAL_STUDY_DAYS) * 100));
+  // Total completed tasks
+  const totalDone = Object.values(ksiProgress).reduce((a, tasks) => a + tasks.length, 0);
+  const pct = Math.min(100, Math.round((totalDone / KSI_TOTAL_TASKS) * 100));
+  const weeksCompleted = KSI_WEEKS.filter((w, i) => {
+    const required = w.hasWriting ? ["vod", "activities", "writing", "liveClass"] : ["vod", "activities", "liveClass"];
+    const done = ksiProgress[i] || [];
+    return required.every(t => done.includes(t));
+  }).length;
 
-  // Precompute phase headers
-  const phaseHeaderAt = new Set();
-  let _lastPhase = null;
-  SCHEDULE.forEach((entry, idx) => {
-    if (!entry.isBreak && entry.phase !== _lastPhase) {
-      phaseHeaderAt.add(idx);
-      _lastPhase = entry.phase;
+  // Auto-expand current or next upcoming week
+  const autoIdx = (() => {
+    // Find current week (sunday is the class day — week runs prev Mon to this Sun)
+    for (let i = 0; i < KSI_WEEKS.length; i++) {
+      const w = KSI_WEEKS[i];
+      const prevMon = addDays(w.sunday, -6);
+      if (today >= prevMon && today <= w.sunday) return i;
     }
-  });
+    // Otherwise first incomplete
+    for (let i = 0; i < KSI_WEEKS.length; i++) {
+      const w = KSI_WEEKS[i];
+      const required = w.hasWriting ? ["vod","activities","writing","liveClass"] : ["vod","activities","liveClass"];
+      const done = ksiProgress[i] || [];
+      if (!required.every(t => done.includes(t))) return i;
+    }
+    return 0;
+  })();
 
-  // Auto-expand first incomplete study week
-  const firstIncompleteIdx = SCHEDULE.findIndex((e, i) => {
-    if (e.isBreak) return false;
-    const checked = (bootcampProgress[i] || []).length;
-    return checked < e.days;
-  });
-  const effectiveExpanded = expandedIdx !== null ? expandedIdx : firstIncompleteIdx;
+  const effectiveExpanded = expandedIdx !== null ? expandedIdx : autoIdx;
 
-  const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+  const TASKS = [
+    { id: "vod",       label: "VOD",        emoji: "📹", desc: "Watch pre-class video" },
+    { id: "activities",label: "Activities", emoji: "✏️", desc: "Complete practice exercises" },
+    { id: "writing",   label: "Writing",    emoji: "📝", desc: "Submit writing assignment" },
+    { id: "liveClass", label: "Live Class", emoji: "🎙️", desc: "Attend Sunday Zoom · 12:00–14:00" },
+  ];
 
   return (
     <div style={{ padding: "16px 14px" }}>
       {/* Header */}
       <div style={{ background: "#6b5b8a", borderRadius: 12, padding: "18px 16px", marginBottom: 16, color: "#f5f2eb" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-          <span style={{ fontSize: 28 }}>🚀</span>
+          <span style={{ fontSize: 28 }}>🏫</span>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 16 }}>23-Week Bootcamp</div>
-            <div style={{ fontSize: 12, opacity: 0.65 }}>TTMIK Level 1 & 2 · All 55 Lessons · Mon–Fri</div>
+            <div style={{ fontWeight: 700, fontSize: 16 }}>KSI 한국어 1A</div>
+            <div style={{ fontSize: 12, opacity: 0.65 }}>Online Sejong Institute · 10 Weeks · Jul 27 – Sep 27</div>
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, opacity: 0.75, marginBottom: 6 }}>
-          <span>{totalChecked} / {TOTAL_STUDY_DAYS} days completed</span>
+          <span>{weeksCompleted} / {KSI_WEEKS.length} weeks complete</span>
           <span>{pct}%</span>
         </div>
         <div style={{ background: "rgba(255,255,255,0.15)", borderRadius: 4, height: 8 }}>
@@ -609,80 +606,88 @@ function Programs({ sessions, onLogSession, bootcampProgress, onToggleDay }) {
         </div>
       </div>
 
-      {/* Schedule */}
-      {SCHEDULE.map((entry, idx) => {
-        const showPhaseLabel = phaseHeaderAt.has(idx);
+      {/* Week cards */}
+      {KSI_WEEKS.map((week, idx) => {
+        const required = week.hasWriting
+          ? ["vod", "activities", "writing", "liveClass"]
+          : ["vod", "activities", "liveClass"];
+        const done = ksiProgress[idx] || [];
+        const weekDone = required.every(t => done.includes(t));
         const isExpanded = effectiveExpanded === idx;
-        const checked = bootcampProgress[idx] || [];
-        const weekDone = !entry.isBreak && checked.length >= entry.days;
+        const isCurrent = (() => {
+          const prevMon = addDays(week.sunday, -6);
+          return today >= prevMon && today <= week.sunday;
+        })();
+        const isPast = today > week.sunday;
+        const isFuture = today < addDays(week.sunday, -6);
 
         return (
-          <div key={idx}>
-            {showPhaseLabel && (
-              <div style={{ ...ss.sectionLabel, marginTop: idx > 0 ? 20 : 4 }}>
-                {entry.phase === 1 ? "PHASE 1 — LEVEL 1 FOUNDATIONS" : "PHASE 2 — LEVEL 2 GRAMMAR"}
-              </div>
-            )}
+          <div key={idx} style={{ background: "#fff", borderRadius: 10, marginBottom: 8, overflow: "hidden",
+            border: weekDone ? "2px solid #9b7fb6" : isCurrent ? "2px solid #b49ac4" : "1.5px solid #e8e0f0" }}>
 
-{/* Break */}
-            {entry.isBreak && (
-              <div style={{ marginTop: 20, marginBottom: 4 }}>
-                <div style={ss.sectionLabel}>BREAK — BETWEEN LEVELS</div>
-                <div style={{ background: "#fdf8fe", borderRadius: 10, marginBottom: 8, padding: "14px", border: "1.5px dashed #b49ac4" }}>
-                  <div style={{ fontSize: 13, color: "#9a7fc4", fontWeight: 600, marginBottom: 3 }}>Rest week</div>
-                  <div style={{ fontSize: 11, color: "#bbb" }}>{entry.sub}</div>
+            {/* Week header */}
+            <button onClick={() => setExpandedIdx(isExpanded ? null : idx)}
+              style={{ width: "100%", background: "none", border: "none", cursor: "pointer", padding: "12px 14px",
+                display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+                <span style={{ fontWeight: 700, fontSize: 13, color: weekDone ? "#9b7fb6" : isFuture ? "#bbb" : "#6b5b8a", flexShrink: 0 }}>
+                  {weekDone ? "✓ " : ""}W{week.num}
+                </span>
+                {isCurrent && <span style={{ background: "#7a6aaa", color: "#fff", fontSize: 9, fontWeight: 700, borderRadius: 10, padding: "2px 7px", flexShrink: 0 }}>NOW</span>}
+                <span style={{ fontSize: 11, color: "#aaa", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {week.topic} · {week.grammar}
+                </span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0, marginLeft: 8 }}>
+                <span style={{ fontSize: 11, color: weekDone ? "#9b7fb6" : "#bbb", fontWeight: 600 }}>
+                  {done.length}/{required.length}
+                </span>
+                <span style={{ color: "#bbb", fontSize: 12 }}>{isExpanded ? "▲" : "▼"}</span>
+              </div>
+            </button>
+
+            {/* Expanded content */}
+            {isExpanded && (
+              <div style={{ padding: "0 14px 16px" }}>
+                {/* Lesson info */}
+                <div style={{ background: "#fdf8fe", borderRadius: 8, padding: "10px 12px", marginBottom: 12 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#6b5b8a", marginBottom: 2 }}>{week.title}</div>
+                  <div style={{ fontSize: 11, color: "#aaa" }}>{week.grammar}</div>
+                  <div style={{ fontSize: 11, color: "#bbb", marginTop: 4 }}>
+                    🎙️ Live class: Sun {fmtShort(week.sunday)} · 12:00–14:00 Berlin
+                  </div>
                 </div>
-              </div>
-            )}
 
-            {/* Study week */}
-            {!entry.isBreak && (
-              <div style={{ background: "#fff", borderRadius: 10, marginBottom: 8, overflow: "hidden", border: weekDone ? "2px solid #9b7fb6" : "1.5px solid #e8e0f0" }}>
-                <button
-                  onClick={() => setExpandedIdx(isExpanded ? null : idx)}
-                  style={{ width: "100%", background: "none", border: "none", cursor: "pointer", padding: "12px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
-                    <span style={{ fontWeight: 700, fontSize: 13, color: weekDone ? "#9b7fb6" : "#6b5b8a", flexShrink: 0 }}>
-                      {weekDone ? "✓ " : ""}{entry.label}
-                    </span>
-                    <span style={{ fontSize: 10, color: "#bbb", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{entry.sub}</span>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0, marginLeft: 8 }}>
-                    <span style={{ fontSize: 11, color: checked.length === entry.days ? "#9b7fb6" : "#bbb", fontWeight: 600 }}>{checked.length}/{entry.days}</span>
-                    <span style={{ color: "#bbb", fontSize: 12 }}>{isExpanded ? "▲" : "▼"}</span>
-                  </div>
-                </button>
-
-                {isExpanded && (
-                  <div style={{ padding: "4px 14px 14px" }}>
-                    <div style={{ fontSize: 11, color: "#aaa", marginBottom: 10 }}>{entry.sub}</div>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 6 }}>
-                      {DAY_LABELS.map((dayLabel, dIdx) => {
-                        const isChecked = checked.includes(dIdx);
-                        return (
-                          <button
-                            key={dIdx}
-                            onClick={() => onToggleDay(idx, dIdx)}
-                            style={{
-                              display: "flex", flexDirection: "column", alignItems: "center",
-                              padding: "10px 4px", borderRadius: 8,
-                              border: "1.5px solid",
-                              borderColor: isChecked ? "#9b7fb6" : "#e8e0f0",
-                              background: isChecked ? "#9b7fb6" : "#fff",
-                              cursor: "pointer",
-                            }}>
-                            <span style={{ fontSize: 9, fontWeight: 700, color: isChecked ? "rgba(255,255,255,0.75)" : "#bbb", textTransform: "uppercase" }}>
-                              {dayLabel}
-                            </span>
-                            <span style={{ fontSize: 16, marginTop: 4, color: isChecked ? "#fff" : "#ddd" }}>
-                              {isChecked ? "✓" : "○"}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
+                {/* Task checkboxes */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {TASKS.filter(t => t.id !== "writing" || week.hasWriting).map(task => {
+                    const isChecked = done.includes(task.id);
+                    const isLiveClass = task.id === "liveClass";
+                    const liveDisabled = isLiveClass && isFuture;
+                    return (
+                      <button key={task.id}
+                        onClick={() => !liveDisabled && onToggleTask(idx, task.id)}
+                        style={{
+                          display: "flex", alignItems: "center", gap: 12,
+                          padding: "10px 12px", borderRadius: 8, border: "1.5px solid",
+                          borderColor: isChecked ? "#9b7fb6" : "#e8e0f0",
+                          background: isChecked ? "#f8f4ff" : "#fff",
+                          cursor: liveDisabled ? "default" : "pointer",
+                          opacity: liveDisabled ? 0.4 : 1, textAlign: "left",
+                        }}>
+                        <span style={{ fontSize: 18, flexShrink: 0 }}>
+                          {isChecked ? "✅" : task.emoji}
+                        </span>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 13, fontWeight: 600, color: isChecked ? "#9b7fb6" : "#2d2d2d" }}>
+                            {task.label}
+                          </div>
+                          <div style={{ fontSize: 11, color: "#aaa" }}>{task.desc}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
@@ -722,7 +727,7 @@ export default function App() {
     return loadFromStorage("ks_sessions", []);
   });
   const [freezeDays, setFreezeDays] = useState(() => loadFromStorage(FREEZE_KEY, []));
-  const [bootcampProgress, setBootcampProgress] = useState(() => loadFromStorage('ks_bootcamp_progress', {}));
+  const [ksiProgress, setKsiProgress] = useState(() => loadFromStorage('ks_ksi_progress', {}));
 
   const setSessions_ = (updater) => {
     setSessions((prev) => {
@@ -761,14 +766,14 @@ export default function App() {
     setFreezeDays(updated);
   };
 
-  const toggleDay = (weekIdx, dayIdx) => {
-    setBootcampProgress((prev) => {
-      const weekDays = prev[weekIdx] || [];
-      const updated = weekDays.includes(dayIdx)
-        ? weekDays.filter(d => d !== dayIdx)
-        : [...weekDays, dayIdx];
+  const toggleTask = (weekIdx, taskId) => {
+    setKsiProgress((prev) => {
+      const weekTasks = prev[weekIdx] || [];
+      const updated = weekTasks.includes(taskId)
+        ? weekTasks.filter(t => t !== taskId)
+        : [...weekTasks, taskId];
       const next = { ...prev, [weekIdx]: updated };
-      saveToStorage('ks_bootcamp_progress', next);
+      saveToStorage('ks_ksi_progress', next);
       return next;
     });
   };
@@ -811,7 +816,7 @@ export default function App() {
         {tab === "dashboard" && <Dashboard sessions={sessions} freezeDays={freezeDays} onFreeze={freezeToday} onUnfreeze={unfreezeToday} />}
         {tab === "log" && <LogSession onSave={addSession} />}
         {tab === "history" && <History sessions={sessions} onDelete={deleteSession} onImport={importSessions} />}
-        {tab === "programs" && <Programs sessions={sessions} onLogSession={addSessionFromPrograms} bootcampProgress={bootcampProgress} onToggleDay={toggleDay} />}
+        {tab === "programs" && <Programs ksiProgress={ksiProgress} onToggleTask={toggleTask} />}
       </div>
     </div>
   );
