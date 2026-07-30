@@ -53,19 +53,19 @@ const RESOURCES = [
 // tasks: vod, activities, writing (optional), liveClass
 
 const KSI_WEEKS = [
-  { num: 1,  sunday: "2026-07-27", topic: "자기소개",   title: "저는 한국 사람이에요",          grammar: "이다 / 은" },
-  { num: 2,  sunday: "2026-08-02", topic: "가족, 직업", title: "회사원이 아니에요",             grammar: "이 / 이 아니다" },
-  { num: 3,  sunday: "2026-08-09", topic: "일상생활",   title: "저도 드라마를 좋아합니다",       grammar: "-습니다/습니까 / 을 / 도", hasWriting: true },
-  { num: 4,  sunday: "2026-08-16", topic: "학교",       title: "여기가 지훈 씨의 학교입니까?",  grammar: "과, 하고 / 의" },
-  { num: 5,  sunday: "2026-08-23", topic: "날씨",       title: "날씨가 좋지 않아요",            grammar: "-어요 / -지 않다" },
-  { num: 6,  sunday: "2026-08-30", topic: "친구",       title: "친구한테 편지를 써요",           grammar: "에게, 한테 / 만", hasWriting: true },
-  { num: 7,  sunday: "2026-09-06", topic: "장소, 위치", title: "지금 어디에 있어요?",           grammar: "(장소)에 / 에서" },
-  { num: 8,  sunday: "2026-09-13", topic: "과거",       title: "토요일에 친구를 만났어요",       grammar: "-었- / (시간)에" },
-  { num: 9,  sunday: "2026-09-20", topic: "운동",       title: "저는 수영을 못해요",             grammar: "부터 / -지 못하다" },
-  { num: 10, sunday: "2026-09-27", topic: "약속",       title: "같이 점심을 먹을까요?",          grammar: "-을까요 / -읍시다 / -고" },
+  { num: 1,  start: "2026-07-27", sunday: "2026-08-02", topic: "자기소개",   title: "저는 한국 사람이에요",          grammar: "이다 / 은",                    noClass: true },
+  { num: 2,  start: "2026-07-28", sunday: "2026-08-02", topic: "가족, 직업", title: "회사원이 아니에요",             grammar: "이 / 이 아니다" },
+  { num: 3,  start: "2026-08-03", sunday: "2026-08-09", topic: "일상생활",   title: "저도 드라마를 좋아합니다",       grammar: "-습니다/습니까 / 을 / 도", hasWriting: true },
+  { num: 4,  start: "2026-08-10", sunday: "2026-08-16", topic: "학교",       title: "여기가 지훈 씨의 학교입니까?",  grammar: "과, 하고 / 의" },
+  { num: 5,  start: "2026-08-17", sunday: "2026-08-23", topic: "날씨",       title: "날씨가 좋지 않아요",            grammar: "-어요 / -지 않다" },
+  { num: 6,  start: "2026-08-24", sunday: "2026-08-30", topic: "친구",       title: "친구한테 편지를 써요",           grammar: "에게, 한테 / 만", hasWriting: true },
+  { num: 7,  start: "2026-08-31", sunday: "2026-09-06", topic: "장소, 위치", title: "지금 어디에 있어요?",           grammar: "(장소)에 / 에서" },
+  { num: 8,  start: "2026-09-07", sunday: "2026-09-13", topic: "과거",       title: "토요일에 친구를 만났어요",       grammar: "-었- / (시간)에" },
+  { num: 9,  start: "2026-09-14", sunday: "2026-09-20", topic: "운동",       title: "저는 수영을 못해요",             grammar: "부터 / -지 못하다" },
+  { num: 10, start: "2026-09-21", sunday: "2026-09-27", topic: "약속",       title: "같이 점심을 먹을까요?",          grammar: "-을까요 / -읍시다 / -고" },
 ];
 
-const KSI_TOTAL_TASKS = KSI_WEEKS.reduce((a, w) => a + (w.hasWriting ? 4 : 3), 0); // 32
+const KSI_TOTAL_TASKS = KSI_WEEKS.reduce((a, w) => a + (w.prepOnly ? 2 : w.hasWriting ? 4 : 3), 0);
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
 const fmt = (iso) => parseDate(iso).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
@@ -554,23 +554,28 @@ function Programs({ ksiProgress, onToggleTask }) {
   const totalDone = Object.values(ksiProgress).reduce((a, tasks) => a + tasks.length, 0);
   const pct = Math.min(100, Math.round((totalDone / KSI_TOTAL_TASKS) * 100));
   const weeksCompleted = KSI_WEEKS.filter((w, i) => {
-    const required = w.hasWriting ? ["vod", "activities", "writing", "liveClass"] : ["vod", "activities", "liveClass"];
+    const required = w.prepOnly
+      ? ["vod", "activities"]
+      : w.hasWriting
+      ? ["vod", "activities", "writing", "liveClass"]
+      : ["vod", "activities", "liveClass"];
     const done = ksiProgress[i] || [];
     return required.every(t => done.includes(t));
   }).length;
 
-  // Auto-expand current or next upcoming week
+  // Auto-expand current week based on start date
   const autoIdx = (() => {
-    // Find current week (sunday is the class day — week runs prev Mon to this Sun)
     for (let i = 0; i < KSI_WEEKS.length; i++) {
       const w = KSI_WEEKS[i];
-      const prevMon = addDays(w.sunday, -6);
-      if (today >= prevMon && today <= w.sunday) return i;
+      const weekEnd = w.sunday || addDays(w.start, 6);
+      if (today >= w.start && today <= weekEnd) return i;
     }
-    // Otherwise first incomplete
+    // First incomplete
     for (let i = 0; i < KSI_WEEKS.length; i++) {
       const w = KSI_WEEKS[i];
-      const required = w.hasWriting ? ["vod","activities","writing","liveClass"] : ["vod","activities","liveClass"];
+      const required = w.noClass
+        ? (w.hasWriting ? ["vod","activities","writing"] : ["vod","activities"])
+        : (w.hasWriting ? ["vod","activities","writing","liveClass"] : ["vod","activities","liveClass"]);
       const done = ksiProgress[i] || [];
       if (!required.every(t => done.includes(t))) return i;
     }
@@ -594,7 +599,7 @@ function Programs({ ksiProgress, onToggleTask }) {
           <span style={{ fontSize: 28 }}>🏫</span>
           <div>
             <div style={{ fontWeight: 700, fontSize: 16 }}>KSI 한국어 1A</div>
-            <div style={{ fontSize: 12, opacity: 0.65 }}>Online Sejong Institute · 10 Weeks · Jul 27 – Sep 27</div>
+            <div style={{ fontSize: 12, opacity: 0.65 }}>Online Sejong Institute · 10 Weeks · Jul 27 – Sep 27 · Sun 12:00–14:00</div>
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, opacity: 0.75, marginBottom: 6 }}>
@@ -608,18 +613,18 @@ function Programs({ ksiProgress, onToggleTask }) {
 
       {/* Week cards */}
       {KSI_WEEKS.map((week, idx) => {
-        const required = week.hasWriting
+        const required = week.prepOnly
+          ? ["vod", "activities"]
+          : week.hasWriting
           ? ["vod", "activities", "writing", "liveClass"]
           : ["vod", "activities", "liveClass"];
         const done = ksiProgress[idx] || [];
         const weekDone = required.every(t => done.includes(t));
         const isExpanded = effectiveExpanded === idx;
-        const isCurrent = (() => {
-          const prevMon = addDays(week.sunday, -6);
-          return today >= prevMon && today <= week.sunday;
-        })();
-        const isPast = today > week.sunday;
-        const isFuture = today < addDays(week.sunday, -6);
+        const weekEnd = week.sunday || addDays(week.start, 6);
+        const isCurrent = today >= week.start && today <= weekEnd;
+        const isPast = today > weekEnd;
+        const isFuture = today < week.start;
 
         return (
           <div key={idx} style={{ background: "#fff", borderRadius: 10, marginBottom: 8, overflow: "hidden",
@@ -653,17 +658,23 @@ function Programs({ ksiProgress, onToggleTask }) {
                 <div style={{ background: "#fdf8fe", borderRadius: 8, padding: "10px 12px", marginBottom: 12 }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: "#6b5b8a", marginBottom: 2 }}>{week.title}</div>
                   <div style={{ fontSize: 11, color: "#aaa" }}>{week.grammar}</div>
-                  <div style={{ fontSize: 11, color: "#bbb", marginTop: 4 }}>
-                    🎙️ Live class: Sun {fmtShort(week.sunday)} · 12:00–14:00 Berlin
-                  </div>
+                  {week.prepOnly ? (
+                    <div style={{ fontSize: 11, color: "#bbb", marginTop: 4 }}>
+                      📅 Prep week · Materials released {fmtShort(week.prepStart)} · First class {fmtShort(week.sunday)}
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 11, color: "#bbb", marginTop: 4 }}>
+                      🎙️ Live class: Sun {fmtShort(week.sunday)} · 12:00–14:00 Berlin
+                    </div>
+                  )}
                 </div>
 
                 {/* Task checkboxes */}
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {TASKS.filter(t => t.id !== "writing" || week.hasWriting).map(task => {
+                  {TASKS.filter(t => (t.id !== "writing" || week.hasWriting) && (t.id !== "liveClass" || !week.prepOnly)).map(task => {
                     const isChecked = done.includes(task.id);
                     const isLiveClass = task.id === "liveClass";
-                    const liveDisabled = isLiveClass && isFuture;
+                    const liveDisabled = isLiveClass && (isFuture || week.noClass);
                     return (
                       <button key={task.id}
                         onClick={() => !liveDisabled && onToggleTask(idx, task.id)}
